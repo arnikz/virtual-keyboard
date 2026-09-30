@@ -14,7 +14,7 @@ class KeyboardApp:
         self.portrait = portrait
 
         self.root = tk.Tk()
-        self.root.title("Keyboard")
+        self.root.title("Virtual Keyboard")
         self.root.attributes('-topmost', True)
         self.root.configure(bg='white')
         self.root.resizable(False, False)
