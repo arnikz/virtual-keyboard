@@ -1,8 +1,8 @@
 ### Virtual Keyboard
 - [AutoHotkey](https://www.autohotkey.com/) (AHK) only:
-  - `Keyboard.ahk` script to `Keyboard.exe` via [Ahk2Exe](https://github.com/AutoHotkey/Ahk2Exe)
+  - [`Keyboard.ahk`](/src/Keyboard.ahk) script to `Keyboard.exe` via [Ahk2Exe](https://github.com/AutoHotkey/Ahk2Exe)
 - Python/TK + [AHK](https://github.com/spyoungtech/ahk) wrapper
-  - `Keyboard.py` script to `PyKeyboard.exe` via [PyInstaller](https://pyinstaller.org/)
+  - [`Keyboard.py`](/src/Keyboard.py) script to `PyKeyboard.exe` via [PyInstaller](https://pyinstaller.org/)
 
 1. Open _PowerShell_ and install Python incl. dependencies.
 ```powershell
