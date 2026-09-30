@@ -7,11 +7,13 @@ py -m venv $VENV
 py -m pip install "ahk[binary]" # install AutoHotkey(V2).exe binaries into $VENV
 py -m pip install pyinstaller
 py -c "import ahk_binary; from ahk import AHK; ahk = AHK(executable_path='$VENV\\Scripts\\AutoHotkey.exe')" # test AHK
-$EXIT_CODE=$?
+$EXIT_CODE=$LASTEXITCODE
+
 if ($EXIT_CODE) {
-    echo "*** Test passed. ***"
-} else {
     echo "*** Test failed! ***"
+} else {
+    echo "*** Test passed. ***"
 }
 deactivate
+# echo $EXIT_CODE
 exit $EXIT_CODE
