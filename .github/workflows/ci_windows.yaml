@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      NAME: ${{ github.repository.name }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,11 +25,10 @@ jobs:
       - name: Archive app
         uses: actions/upload-artifact@v4
         with:
-          name: virtual-keyboard
+          name: ${{ env.NAME }}
           path: .\dist
 
       - name: Download app
         uses: actions/download-artifact@v4
         with:
-          name: virtual-keyboard
- 
+          name: ${{ env.NAME }}
