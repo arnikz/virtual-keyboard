@@ -23,7 +23,7 @@ class KeyboardApp:
     BTN_COLOR = 'lightgray'  # set button color
 
     def __init__(self, hwnd=None, desc="", mode=0):
-        self.ahk = AHK()  # executable_path=".\\AutoHotKey.exe"
+        self.ahk = AHK(executable_path=".\\Resources\\AutoHotKey.exe")
         self.hwnd = hwnd
         self.shift = True
         self.max_len = 30
