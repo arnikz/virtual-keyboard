@@ -1,10 +1,13 @@
 $VENV=".venv"
+$NAME="Keyboard"
+$OUTDIR="dist"
 
 & ".\$VENV\Scripts\activate"
-pyinstaller --name PyKeyboard --noconsole --onefile "src\Keyboard.py"
-Copy-Item -Path ".\$VENV\Scripts\AutoHotkey.exe" -Destination ".\dist" -Force
-cd .\dist
-.\PyKeyboard.exe # lanscape (default) or portrait mode with -p, --portrait option
+pyinstaller --name "$NAME" --noconsole --onefile "src\Keyboard.py"
+Copy-Item -Path ".\$VENV\Scripts\AutoHotkey.exe" -Destination "$OUTDIR" -Force
+cd "$OUTDIR"
+
+& ".\$NAME.exe" -i 1 -d MyRecording -m 0
 $EXIT_CODE=$LASTEXITCODE
 
 if ($EXIT_CODE) {
@@ -14,4 +17,5 @@ if ($EXIT_CODE) {
 }
 deactivate
 # echo $EXIT_CODE
+cd ..
 exit $EXIT_CODE

@@ -1,22 +1,39 @@
+import argparse
+import ahk
 import sys
 import tkinter as tk
+import ctypes
 from tkinter import messagebox
 from ahk import AHK
-from ahk import Window
+from ctypes import wintypes
+
+# Define ULONG_PTR (replaces wintypes.ULONG_PTR) and COPYDATASTRUCT globally
+ULONG_PTR = ctypes.c_size_t
+
+class COPYDATASTRUCT(ctypes.Structure):
+    _fields_ = [
+        ('dwData', ULONG_PTR),
+        ('cbData', wintypes.DWORD),
+        ('lpData', ctypes.c_void_p)
+    ]
+
 
 class KeyboardApp:
-    def __init__(self, target_hwnd=None, portrait=False):
-        self.ahk = AHK(executable_path=".\\AutoHotKey.exe")
-        self.target_hwnd = target_hwnd
-        self.shift = False
+    BG_COLOR = '#221E1F'  # set background color
+    BTN_COLOR = 'lightgray'  # set button color
+
+    def __init__(self, hwnd=None, desc="", mode=0):
+        self.ahk = AHK()  # executable_path=".\\AutoHotKey.exe"
+        self.hwnd = hwnd
+        self.shift = True
         self.max_len = 30
-        self.current_text = ""
-        self.portrait = portrait
+        self.desc = desc
+        self.mode = mode
 
         self.root = tk.Tk()
         self.root.title("Virtual Keyboard")
         self.root.attributes('-topmost', True)
-        self.root.configure(bg='white')
+        self.root.configure(bg=self.BG_COLOR)
         self.root.resizable(False, False)
 
         self.letter_buttons = []
@@ -25,7 +42,7 @@ class KeyboardApp:
 
     def setup_gui(self):
         # Define layout parameters
-        if self.portrait:
+        if self.mode:
             key_width = 4
             key_height = 1
             font_size = 10
@@ -40,34 +57,37 @@ class KeyboardApp:
             pad_x = 10
             pad_y = 10
 
-        main_frame = tk.Frame(self.root, bg='white')
+        main_frame = tk.Frame(self.root, bg=self.BG_COLOR)
         main_frame.pack(padx=pad_x, pady=pad_y, fill='both', expand=True)
 
         # Top row: Display and Clear
-        top_frame = tk.Frame(main_frame, bg='white')
+        top_frame = tk.Frame(main_frame, bg=self.BG_COLOR)
         top_frame.pack(fill='x', pady=(0, 10))
 
         self.display_var = tk.StringVar()
+        self.display_var.set(self.desc)
+
         self.display = tk.Entry(top_frame, textvariable=self.display_var,
                                 state='readonly', font=('TkFixedFont', font_size+2),
                                 relief='sunken', bd=2)
-        self.display.pack(side='left', fill='x', expand=True, padx=(0, 10), ipady=5)
+        self.display.pack(side='left', fill='x',
+                          expand=True, padx=(0, 10), ipady=5)
 
         clear_btn = tk.Button(top_frame, text="Clear", font=('TkDefaultFont', font_size),
-                             relief='raised', bd=2, width=8,
-                             command=self.clear_text)
+                              relief='raised', bd=2, width=8,
+                              command=self.clear_text, bg=self.BTN_COLOR)
         clear_btn.pack(side='right', ipady=5)
 
         # Keyboard grid
-        keyboard_frame = tk.Frame(main_frame, bg='white')
+        keyboard_frame = tk.Frame(main_frame, bg=self.BG_COLOR)
         keyboard_frame.pack()
 
         # Helper function to create buttons
         def make_btn(text, col, row, colspan=1, rowspan=1, is_letter=False, extra_cmd=None):
             btn = tk.Button(keyboard_frame, text=text,
-                           font=('TkDefaultFont', font_size),
-                           width=key_width, height=key_height,
-                           relief='raised', bd=2)
+                            font=('TkDefaultFont', font_size),
+                            width=key_width, height=key_height,
+                            relief='raised', bd=2, bg=self.BTN_COLOR)
             if is_letter:
                 btn.orig = text.upper() if text.isalpha() else text
                 btn.config(command=lambda b=btn: self.on_char_click(b))
@@ -88,7 +108,8 @@ class KeyboardApp:
         for col, char in enumerate("QWERTYUIOP", start=1):
             make_btn(char, col, 1, is_letter=True)
 
-        make_btn("Enter", 11, 1, colspan=2, rowspan=2, extra_cmd=self.submit_text)
+        make_btn("Enter", 11, 1, colspan=2, rowspan=2,
+                 extra_cmd=self.submit_text)
 
         # Row 2: ASDF
         for col, char in enumerate("ASDFGHJKL", start=2):
@@ -130,7 +151,7 @@ class KeyboardApp:
 
     # All other methods remain unchanged from the previous working version
     def on_char_click(self, btn):
-        if len(self.current_text) >= self.max_len:
+        if len(self.desc) >= self.max_len:
             return
         char = btn.orig
         if self.shift:
@@ -142,14 +163,14 @@ class KeyboardApp:
                 char = char.upper()
         else:
             char = char.lower()
-        self.current_text += char
-        self.display_var.set(self.current_text)
+        self.desc += char
+        self.display_var.set(self.desc)
 
     def add_space(self):
-        if len(self.current_text) >= self.max_len:
+        if len(self.desc >= self.max_len):
             return
-        self.current_text += " "
-        self.display_var.set(self.current_text)
+        self.desc += " "
+        self.display_var.set(self.desc)
 
     def toggle_shift(self):
         self.shift = not self.shift
@@ -171,38 +192,39 @@ class KeyboardApp:
                     btn.config(text=char.lower())
 
     def backspace(self):
-        if len(self.current_text) > 0:
-            self.current_text = self.current_text[:-1]
-            self.display_var.set(self.current_text)
+        if len(self.desc) > 0:
+            self.desc = self.desc[:-1]
+            self.display_var.set(self.desc)
 
     def clear_text(self):
-        self.current_text = ""
+        self.desc = ""
         self.display_var.set("")
 
     def submit_text(self):
-        if not self.current_text:
+        if not self.desc:
             return
-        if not self.target_hwnd:
+        if not self.hwnd:
             messagebox.showerror("Error", "No target HWND!")
             return
         try:
-            import ctypes
-            from ctypes import wintypes
-            data = self.current_text
-            size = (len(data) + 1) * 2
-            class COPYDATASTRUCT(ctypes.Structure):
-                _fields_ = [
-                    ('dwData', wintypes.ULONG_PTR),
-                    ('cbData', wintypes.DWORD),
-                    ('lpData', ctypes.c_void_p)
-                ]
+            data = self.desc
+            size = (len(data) + 1) * 2  # UTF-16 bytes
+
+            # Allocate memory for the string
             buffer = ctypes.create_unicode_buffer(data)
+
+            # Create COPYDATASTRUCT
             cds = COPYDATASTRUCT()
             cds.dwData = 1
             cds.cbData = size
             cds.lpData = ctypes.addressof(buffer)
-            win = Window.from_id(self.target_hwnd, ahk=self.ahk)
-            win.send_message(0x4A, 0, ctypes.addressof(cds))
+
+            # Call SendMessage directly via ctypes
+            user32 = ctypes.windll.user32
+            # HWND is a pointer-sized integer
+            hwnd = wintypes.HWND(self.hwnd)
+            # WM_COPYDATA = 0x004A
+            user32.SendMessageW(hwnd, 0x004A, 0, ctypes.byref(cds))
         except Exception as e:
             messagebox.showerror("Error", f"Failed to send message: {e}")
             return
@@ -210,22 +232,17 @@ class KeyboardApp:
         sys.exit()
 
     def on_cancel(self):
-        if self.target_hwnd:
+        if self.hwnd:
             try:
-                import ctypes
-                from ctypes import wintypes
-                class COPYDATASTRUCT(ctypes.Structure):
-                    _fields_ = [
-                        ('dwData', wintypes.ULONG_PTR),
-                        ('cbData', wintypes.DWORD),
-                        ('lpData', ctypes.c_void_p)
-                    ]
                 cds = COPYDATASTRUCT()
-                cds.dwData = 2
+                cds.dwData = 2  # CANCEL
                 cds.cbData = 0
                 cds.lpData = 0
-                win = Window.from_id(self.target_hwnd, ahk=self.ahk)
-                win.send_message(0x4A, 0, ctypes.addressof(cds))
+
+                user32 = ctypes.windll.user32
+                hwnd = wintypes.HWND(self.hwnd)
+                user32.SendMessageW(hwnd, 0x004A, 0, ctypes.byref(cds))
+
             except Exception:
                 pass
         self.root.quit()
@@ -234,16 +251,26 @@ class KeyboardApp:
     def run(self):
         self.root.mainloop()
 
+
 def main():
-    target_hwnd = None
-    portrait = False
-    for arg in sys.argv[1:]:
-        if arg in ('--portrait', '-p'):
-            portrait = True
-        elif arg.isdigit():
-            target_hwnd = int(arg)
-    app = KeyboardApp(target_hwnd, portrait)
-    app.run()
+    parser = argparse.ArgumentParser(description="Virtual Keyboard.", add_help=True)
+    parser.add_argument("-i", "--hwnd", type=int, required=True,
+                        help="Pass a unique identifier or handle to a window.")
+    parser.add_argument("-d", "--desc", type=str, default="", required=False,
+                        help="Include description in a file name.")
+    parser.add_argument("-m", "--mode", type=int, default=0, required=False,
+                        help="Show the keyboard in landscape (0) or portrait mode (1) (default: 0).")
+
+    try:
+        args = parser.parse_args()
+        if args.mode not in (0, 1):
+            parser.print_help()
+            parser.error("Invalid value '%s' for MODE!" % args.mode)
+    except SystemExit as e:
+        input("Press ENTER to exit.")
+    else:
+        app = KeyboardApp(hwnd=args.hwnd, desc=args.desc, mode=args.mode)
+        app.run()
 
 if __name__ == "__main__":
     main()
