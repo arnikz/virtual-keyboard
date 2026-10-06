@@ -1,6 +1,6 @@
-import argparse
-import ahk
 import sys
+import ahk
+import argparse
 import tkinter as tk
 import ctypes
 from tkinter import messagebox
@@ -17,13 +17,12 @@ class COPYDATASTRUCT(ctypes.Structure):
         ('lpData', ctypes.c_void_p)
     ]
 
-
 class KeyboardApp:
     BG_COLOR = '#221E1F'  # set background color
     BTN_COLOR = 'lightgray'  # set button color
 
     def __init__(self, hwnd=None, desc="", mode=0):
-        self.ahk = AHK(executable_path=".\\Resources\\AutoHotKey.exe")
+        self.ahk = AHK(executable_path="Resources\\AutoHotkey.exe")
         self.hwnd = hwnd
         self.shift = True
         self.max_len = 30
@@ -43,9 +42,9 @@ class KeyboardApp:
     def setup_gui(self):
         # Define layout parameters
         if self.mode:
-            key_width = 4
-            key_height = 1
-            font_size = 10
+            key_width = 5
+            key_height = 2
+            font_size = 11
             gap = 1
             pad_x = 5
             pad_y = 5
@@ -167,7 +166,7 @@ class KeyboardApp:
         self.display_var.set(self.desc)
 
     def add_space(self):
-        if len(self.desc >= self.max_len):
+        if len(self.desc) >= self.max_len:
             return
         self.desc += " "
         self.display_var.set(self.desc)
