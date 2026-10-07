@@ -4,6 +4,7 @@ $OUTDIR    = "Resources" # default: dist
 $AHK_EXE   = "AutoHotkey.exe"
 $MODE      = 0 # landscape (0) or portrait (1)
 $EXIT_CODE = 0
+$PAUSE     = 5 # sleep 5 sec
 
 function LogInfo {
     param([int]$exitCode)
@@ -16,12 +17,13 @@ function LogInfo {
     }
 }
 
-& ".\$VENV\Scripts\pyinstaller.exe" --name "$NAME" --noconsole --distpath $OUTDIR --onefile "src\Keyboard.py"
-
+& ".\$VENV\Scripts\pyinstaller.exe" --name "$NAME" --distpath $OUTDIR --onefile "src\Keyboard.py"
 Copy-Item -Path ".\$VENV\Scripts\$AHK_EXE" -Destination "$OUTDIR" -Force
 
-& ".\$OUTDIR\$NAME.exe" -i 1 -d MyRecording -m $MODE
-$EXIT_CODE = $LASTEXITCODE
+# & ".\$OUTDIR\$NAME.exe" -i 1 -d MyRecording -m $MODE
+$proc = Start-Process -FilePath ".\$OUTDIR\$NAME.exe" -ArgumentList "-i", "1", "-d", "MyRecording", "-m", "$MODE" -PassThru
+Start-Sleep -Seconds $PAUSE
+$EXIT_CODE = $proc.ExitCode
 LogInfo -exitCode $EXIT_CODE
 
 exit $EXIT_CODE

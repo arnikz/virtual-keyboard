@@ -265,8 +265,8 @@ def main():
         if args.mode not in (0, 1):
             parser.print_help()
             parser.error("Invalid value '%s' for MODE!" % args.mode)
-    except SystemExit as e:
-        input("Press ENTER to exit.")
+    except SystemExit as code:
+        sys.exit(code)
     else:
         app = KeyboardApp(hwnd=args.hwnd, desc=args.desc, mode=args.mode)
         app.run()
