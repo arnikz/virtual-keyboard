@@ -116,7 +116,7 @@ class KeyboardApp:
 
         # Row 3: Shift + ZXCV
         make_btn("Shift", 0, 3, colspan=2, extra_cmd=self.toggle_shift)
-        for col, char in enumerate("ZXCVBNM.-", start=2):
+        for col, char in enumerate("ZXCVBNM>_", start=2):
             make_btn(char, col, 3, is_letter=True)
 
         # Row 4: Space
@@ -148,7 +148,6 @@ class KeyboardApp:
         y = (screen_height - total_height) // 2
         self.root.geometry(f'+{x}+{y}')
 
-    # All other methods remain unchanged from the previous working version
     def on_char_click(self, btn):
         if len(self.desc) >= self.max_len:
             return
@@ -161,7 +160,13 @@ class KeyboardApp:
             else:
                 char = char.upper()
         else:
-            char = char.lower()
+            if char == "_":
+                char = "-"
+            elif char == ">":
+                char = "."
+            else:
+                char = char.lower()
+
         self.desc += char
         self.display_var.set(self.desc)
 
@@ -183,9 +188,9 @@ class KeyboardApp:
                 else:
                     btn.config(text=char.upper())
             else:
-                if char == "-":
+                if char == "_":
                     btn.config(text="-")
-                elif char == ".":
+                elif char == ">":
                     btn.config(text=".")
                 else:
                     btn.config(text=char.lower())
