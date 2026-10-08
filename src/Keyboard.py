@@ -1,11 +1,12 @@
-import sys
-import ahk
 import argparse
-import tkinter as tk
 import ctypes
-from tkinter import messagebox
-from ahk import AHK
+import sys
+import tkinter as tk
 from ctypes import wintypes
+from tkinter import messagebox
+
+import ahk
+from ahk import AHK
 
 # Define ULONG_PTR (replaces wintypes.ULONG_PTR) and COPYDATASTRUCT globally
 ULONG_PTR = ctypes.c_size_t
@@ -30,6 +31,7 @@ class KeyboardApp:
         self.mode = mode
 
         self.root = tk.Tk()
+        # self.root.overrideredirect(True)
         self.root.title("Virtual Keyboard")
         self.root.attributes('-topmost', True)
         self.root.configure(bg=self.BG_COLOR)
@@ -67,7 +69,8 @@ class KeyboardApp:
         self.display_var.set(self.desc)
 
         self.display = tk.Entry(top_frame, textvariable=self.display_var,
-                                state='readonly', font=('TkFixedFont', font_size+2),
+                                state='normal', font=('TkFixedFont', font_size+2),
+                                insertofftime=300, insertontime=600,  # blink on/off time (ms)
                                 relief='sunken', bd=2)
         self.display.pack(side='left', fill='x',
                           expand=True, padx=(0, 10), ipady=5)
@@ -101,7 +104,7 @@ class KeyboardApp:
         for col, num in enumerate("1234567890"):
             make_btn(num, col, 0, is_letter=True)
 
-        make_btn("←", 10, 0, colspan=2, extra_cmd=self.backspace)
+        make_btn("\u232b", 10, 0, colspan=2, extra_cmd=self.backspace)
 
         # Row 1: QWERTY
         for col, char in enumerate("QWERTYUIOP", start=1):
@@ -116,7 +119,7 @@ class KeyboardApp:
 
         # Row 3: Shift + ZXCV
         make_btn("Shift", 0, 3, colspan=2, extra_cmd=self.toggle_shift)
-        for col, char in enumerate("ZXCVBNM>_", start=2):
+        for col, char in enumerate("ZXCVBNM~_", start=2):
             make_btn(char, col, 3, is_letter=True)
 
         # Row 4: Space
@@ -156,25 +159,29 @@ class KeyboardApp:
             if char == "-":
                 char = "_"
             elif char == ".":
-                char = ">"
+                char = "~"
             else:
                 char = char.upper()
         else:
             if char == "_":
                 char = "-"
-            elif char == ">":
+            elif char == "~":
                 char = "."
             else:
                 char = char.lower()
 
         self.desc += char
         self.display_var.set(self.desc)
+        self.display.icursor("end")
+        self.display.focus_set()
 
     def add_space(self):
         if len(self.desc) >= self.max_len:
             return
         self.desc += " "
         self.display_var.set(self.desc)
+        self.display.icursor("end")
+        self.display.focus_set()
 
     def toggle_shift(self):
         self.shift = not self.shift
@@ -184,13 +191,13 @@ class KeyboardApp:
                 if char == "-":
                     btn.config(text="_")
                 elif char == ".":
-                    btn.config(text=">")
+                    btn.config(text="~")
                 else:
                     btn.config(text=char.upper())
             else:
                 if char == "_":
                     btn.config(text="-")
-                elif char == ">":
+                elif char == "~":
                     btn.config(text=".")
                 else:
                     btn.config(text=char.lower())
@@ -254,7 +261,6 @@ class KeyboardApp:
 
     def run(self):
         self.root.mainloop()
-
 
 def main():
     parser = argparse.ArgumentParser(description="Virtual Keyboard.", add_help=True)
