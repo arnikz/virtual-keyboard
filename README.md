@@ -2,8 +2,6 @@
 [![Windows CI](https://github.com/arnikz/virtual-keyboard/actions/workflows/ci_windows.yaml/badge.svg?branch=dev)](https://github.com/arnikz/virtual-keyboard/actions/workflows/ci_windows.yaml)
 
 ### Prerequisites
-- [AutoHotkey](https://www.autohotkey.com/) (AHK) only [DEPRECATED]:
-  - [`Keyboard.ahk`](/test/Keyboard.ahk) script to `Keyboard.exe` via [Ahk2Exe](https://github.com/AutoHotkey/Ahk2Exe)
 - Python/TK + [AHK](https://github.com/spyoungtech/ahk) wrapper
   - [`Keyboard.py`](/src/Keyboard.py) script to `Keyboard.exe` via [PyInstaller](https://pyinstaller.org/)
 
