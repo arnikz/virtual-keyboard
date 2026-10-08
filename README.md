@@ -14,5 +14,5 @@
 2. Create a packaged Python app.
 
 ```powershell
-.\build.ps1 # output file: dist\Keyboard.exe
+.\build.ps1 # output file: Resources\Keyboard.exe
 ```
