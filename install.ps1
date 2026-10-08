@@ -6,6 +6,7 @@ py -m venv $VENV
 & ".\$VENV\Scripts\activate"
 py -m pip install "ahk[binary]" # install AutoHotkey(V2).exe binaries into $VENV
 py -m pip install pyinstaller
+py -m pip install isort
 py -c "import ahk_binary; from ahk import AHK; ahk = AHK(executable_path='$VENV\\Scripts\\AutoHotkey.exe')" # test AHK
 $EXIT_CODE=$LASTEXITCODE
 
