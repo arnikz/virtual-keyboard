@@ -206,6 +206,8 @@ class KeyboardApp:
         if len(self.desc) > 0:
             self.desc = self.desc[:-1]
             self.display_var.set(self.desc)
+        self.display.icursor("end")
+        self.display.focus_set()
 
     def clear_text(self):
         self.desc = ""
