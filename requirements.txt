@@ -1,0 +1,4 @@
+ahk==1.8.4
+ahk-binary==2023.9.0 # include also AutoHotkey(V2).exe binaries
+pyinstaller==6.22.3   
+isort
