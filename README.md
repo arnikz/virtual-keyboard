@@ -2,8 +2,10 @@
 [![Windows CI](https://github.com/arnikz/virtual-keyboard/actions/workflows/ci_windows.yaml/badge.svg?branch=dev)](https://github.com/arnikz/virtual-keyboard/actions/workflows/ci_windows.yaml)
 
 ### Prerequisites
-- Python/TK + [AHK](https://github.com/spyoungtech/ahk) wrapper
-  - [`Keyboard.py`](/src/Keyboard.py) script to `Keyboard.exe` via [PyInstaller](https://pyinstaller.org/)
+- Python
+  - [Tkinter](https://docs.python.org/3.13/library/tkinter.html)
+  - [AHK](https://github.com/spyoungtech/ahk)
+  - [PyInstaller](https://pyinstaller.org/) - used to create one-file bundled [`Keyboard.exe`](/Resources/Keyboard.exe) from [`Keyboard.py`](/src/Keyboard.py) script
 
 1. Open _PowerShell_ and install Python incl. dependencies.
 
