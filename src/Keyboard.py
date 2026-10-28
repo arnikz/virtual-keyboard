@@ -32,7 +32,7 @@ class KeyboardApp:
 
         self.root = tk.Tk()
         # self.root.overrideredirect(True)
-        self.root.title("Virtual Keyboard")
+        self.root.title("Mixtuur Keyboard")
         self.root.attributes('-topmost', True)
         self.root.configure(bg=self.BG_COLOR)
         self.root.resizable(False, False)
