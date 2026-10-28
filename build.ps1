@@ -19,7 +19,7 @@ function LogInfo {
 
 # Activate venv and create exec
 & ".\$VENV\Scripts\activate"
-python -m nuitka --onefile --enable-plugin=tk-inter --windows-console-mode=disable --no-deployment-flag=self-execution src\Keyboard.py
+py -m nuitka --onefile --enable-plugin=tk-inter --assume-yes-for-downloads --windows-console-mode=disable --no-deployment-flag=self-execution src\Keyboard.py
 
 # Copy exec to target dir
 New-Item -Type dir ".\$OUTDIR" -Force
