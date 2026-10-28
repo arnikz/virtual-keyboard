@@ -44,9 +44,9 @@ class KeyboardApp:
     def setup_gui(self):
         # Define layout parameters
         if self.mode:
-            key_width = 5
+            key_width = 4
             key_height = 2
-            font_size = 11
+            font_size = 10
             gap = 1
             pad_x = 5
             pad_y = 5
