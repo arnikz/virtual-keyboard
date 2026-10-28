@@ -15,5 +15,4 @@ else {
     echo "*** Test passed. ***"
 }
 deactivate
-# echo $EXIT_CODE
 exit $EXIT_CODE

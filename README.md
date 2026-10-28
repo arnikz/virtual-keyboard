@@ -5,7 +5,7 @@
 - Python
   - [Tkinter](https://docs.python.org/3.13/library/tkinter.html)
   - [AHK](https://github.com/spyoungtech/ahk)
-  - [PyInstaller](https://pyinstaller.org/) - used to create one-file bundled [`Keyboard.exe`](/Resources/Keyboard.exe) from [`Keyboard.py`](/src/Keyboard.py) script
+  - [Nuitka](https://nuitka.net/) - a Python compiler to create one-file bundled [`Keyboard.exe`](/Resources/Keyboard.exe) from [`Keyboard.py`](/src/Keyboard.py) script
 
 1. Open _PowerShell_ and install Python incl. dependencies.
 

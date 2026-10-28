@@ -1,8 +1,8 @@
 $VENV      = ".venv"
 $NAME      = "Keyboard"
-$OUTDIR    = "Resources" # default: dist
+$OUTDIR    = "Resources"
 $AHK_EXE   = "AutoHotkey.exe"
-$MODE      = 0 # landscape (0) or portrait (1)
+$MODE      = 0 # 0 = landscape or 1 = portrait
 $EXIT_CODE = 0
 $PAUSE     = 5 # sleep 5 sec
 
@@ -17,13 +17,19 @@ function LogInfo {
     }
 }
 
-& ".\$VENV\Scripts\pyinstaller.exe" --name "$NAME" --distpath $OUTDIR --onefile "src\Keyboard.py"
-Copy-Item -Path ".\$VENV\Scripts\$AHK_EXE" -Destination "$OUTDIR" -Force
+# Activate venv and create exec
+& ".\$VENV\Scripts\activate"
+python -m nuitka --onefile --enable-plugin=tk-inter --windows-console-mode=disable --no-deployment-flag=self-execution src\Keyboard.py
 
-# & ".\$OUTDIR\$NAME.exe" -i 1 -d MyRecording -m $MODE
+# Copy exec to target dir
+New-Item -Type dir ".\$OUTDIR" -Force
+Copy-Item ".\$VENV\Scripts\$AHK_EXE" ".\$OUTDIR\$AHK_EXE" -Force
+Move-Item ".\$NAME.exe" ".\$OUTDIR\$NAME.exe" -Force
+
+# Run exec and log errors
 $proc = Start-Process -FilePath ".\$OUTDIR\$NAME.exe" -ArgumentList "-i", "1", "-d", "MyRecording", "-m", "$MODE" -PassThru
 Start-Sleep -Seconds $PAUSE
 $EXIT_CODE = $proc.ExitCode
 LogInfo -exitCode $EXIT_CODE
-
+deactivate
 exit $EXIT_CODE
